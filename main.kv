@@ -1,0 +1,1061 @@
+#:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
+#:import MapView kivy_garden.mapview.MapView
+#:import MapMarker kivy_garden.mapview.MapMarker
+#:import MapMarkerPopup kivy_garden.mapview.MapMarkerPopup
+#:import ButtonBehavior kivy.uix.behaviors.ButtonBehavior
+
+ScreenManager:
+    SplashScreen:
+    RegisterScreen:
+    LoginScreen:
+    HomeScreen:
+
+# ============================ SPLASH SCREEN ============================
+
+<SplashScreen>:
+    name: "splash"
+    FloatLayout:
+        Image:
+            source: "images/Pro drive.jpeg"
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+
+        MDRaisedButton:
+            text: "COMMENCER"
+            size_hint: 0.8, None
+            height: dp(50)
+            pos_hint: {"center_x": 0.5, "y":0.05}
+            md_bg_color: 0, 0.45, 0.85, 0.9
+            elevation: 10
+            on_release: app.root.current = "login"
+
+# ============================ REGISTER SCREEN ============================
+
+<RegisterScreen>:
+    name: "register"
+    FloatLayout:
+        MDBoxLayout:
+            orientation: "vertical"
+            spacing: dp(15)
+            padding: [dp(30), dp(30), dp(30), dp(30)]
+            size_hint: 0.9, None
+            adaptive_height: True
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+
+            MDLabel:
+                text: "Créer un compte"
+                halign: "center"
+                font_style: "H4"
+
+            MDTextField:
+                id: reg_username
+                hint_text: "Nom d'utilisateur"
+                icon_right: "account"
+
+            MDTextField:
+                id: reg_email
+                hint_text: "Email"
+                icon_right: "email"
+
+            MDTextField:
+                id: reg_password
+                hint_text: "Mot de passe"
+                password: True
+                icon_right: "lock"
+
+            MDRaisedButton:
+                text: "S'inscrire"
+                size_hint_x: 0.8
+                pos_hint: {"center_x":0.5}
+                on_release: app.create_account(reg_username.text, reg_email.text, reg_password.text)
+
+            MDTextButton:
+                text: "Déjà un compte ? Se connecter"
+                pos_hint: {"center_x":0.5}
+                on_release: app.root.current = "login"
+
+            MDTextButton:
+                text: "Retour"
+                pos_hint: {"center_x":0.5}
+                on_release: app.root.current = "splash"
+
+# ============================ LOGIN SCREEN ============================
+
+<LoginScreen>:
+    name: "login"
+    FloatLayout:
+        MDBoxLayout:
+            orientation: "vertical"
+            spacing: dp(15)
+            padding: [dp(30), dp(30), dp(30), dp(30)]
+            size_hint: 0.9, None
+            adaptive_height: True
+            pos_hint: {"center_x":0.5, "center_y":0.5}
+
+            MDLabel:
+                text: "Connexion"
+                halign: "center"
+                font_style: "H4"
+
+            MDTextField:
+                id: login_username
+                hint_text: "Nom d'utilisateur"
+                icon_right: "account"
+
+            MDTextField:
+                id: login_password
+                hint_text: "Mot de passe"
+                password: True
+                icon_right: "lock"
+
+            MDRaisedButton:
+                text: "Se connecter"
+                size_hint_x: 0.8
+                pos_hint: {"center_x":0.5}
+                on_release: app.login(login_username.text, login_password.text)
+
+            MDTextButton:
+                text: "Pas de compte ? S'inscrire"
+                pos_hint: {"center_x":0.5}
+                on_release: app.root.current = "register"
+
+            MDTextButton:
+                text: "Retour"
+                pos_hint: {"center_x":0.5}
+                on_release: app.root.current = "splash"
+
+# ============================ HOME SCREEN ============================
+
+<HomeScreen>:
+    name: "home"
+    FloatLayout:
+
+        ScreenManager:
+            id: content_manager
+            size_hint: 1, 1
+
+            HomeContent:
+            SearchScreen:
+            ReserveScreen:
+            ReservationsScreen:
+            ProfileScreen:
+            CarDetailScreen:
+                id: car_detail_screen
+
+        MDCard:
+            size_hint: 1, None
+            height: dp(60)          # reduced so it does not cover buttons
+            pos_hint: {"x":0, "y":0}
+            elevation: 20
+            radius: [25,25,0,0]
+            md_bg_color: 1,1,1,1
+
+            FloatLayout:
+                MDGridLayout:
+                    cols: 5
+                    size_hint: 1,1
+                    padding: [dp(20),0,dp(20),0]
+                    spacing: dp(10)
+
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        MDIconButton:
+                            icon: "home"
+                            pos_hint: {"center_x":0.5}
+                            on_release: app.go_to_screen("home_content")
+                        MDLabel:
+                            text: "Accueil"
+                            halign: "center"
+                            font_style: "Caption"
+
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        MDIconButton:
+                            icon: "magnify"
+                            pos_hint: {"center_x":0.5}
+                            on_release: app.go_to_screen("search")
+                        MDLabel:
+                            text: "Recherche"
+                            halign: "center"
+                            font_style: "Caption"
+
+                    Widget:
+
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        MDIconButton:
+                            icon: "folder"
+                            pos_hint: {"center_x":0.5}
+                            on_release: app.go_to_screen("reservations")
+                        MDLabel:
+                            text: "Réservations"
+                            halign: "center"
+                            font_style: "Caption"
+
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        MDIconButton:
+                            icon: "account"
+                            pos_hint: {"center_x":0.5}
+                            on_release: app.go_to_screen("profile")
+                        MDLabel:
+                            text: "Profil"
+                            halign: "center"
+                            font_style: "Caption"
+
+        MDFloatingActionButton:
+            icon: "whatsapp"
+            md_bg_color: 0,0.7,0,1
+            elevation: 12
+            size_hint: None,None
+            size: dp(60), dp(60)
+            pos_hint: {"right":0.95, "y":0.18}
+            on_release: app.open_whatsapp()
+
+# ============================ HOME CONTENT ============================
+
+<HomeContent@Screen>:
+    name: "home_content"
+
+    ScrollView:
+        do_scroll_x: False
+        md_bg_color: 0.04, 0.06, 0.1, 1  # Fond sombre #0b0f1a du Web
+
+        MDBoxLayout:
+            orientation: "vertical"
+            adaptive_height: True
+            spacing: dp(20)
+            padding: [0, 0, 0, dp(100)]
+
+            # --- PARTIE HAUT : IMAGE ADAPTIVE + DIAPORAMA FONCTIONNEL ---
+            MDFloatLayout:
+                size_hint_y: None
+                height: dp(350)
+                pos_hint: {"top": 1}
+
+                # FitImage remplace Image pour un rendu parfait sur Android/iPhone
+                FitImage:
+                    source: "images/defaut.jpg"
+                    size_hint: 1, 1
+                    opacity: 0.8
+                    pos_hint: {"top": 1}
+
+                # Diaporama des phrases (Corrigé avec des conteneurs séparés)
+                MDCarousel:
+                    id: hero_slider
+                    direction: 'right'
+                    loop: True
+                    auto_slide: True
+                    auto_slide_duration: 4.0
+                    size_hint: 1, 0.4
+                    pos_hint: {"center_x": 0.5, "top": 0.95}
+
+                    # Slide 1 : D'EXCEPTION
+                    MDFloatLayout:
+                        MDLabel:
+                            text: "Votre partenaire mobilité de qualité"
+                            markup: True
+                            halign: "left"
+                            font_style: "H4"
+                            pos_hint: {"center_x": 0.55, "center_y": 0.5}
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    # Slide 2 : SERVICE CLIENT (Vert)
+                    MDFloatLayout:
+                        MDLabel:
+                            text: "Service client disponible"
+                            markup: True
+                            halign: "left"
+                            font_style: "H4"
+                            pos_hint: {"center_x": 0.55, "center_y": 0.5}
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                    # Slide 3 : LOCATION & VENTE (Rouge)
+                    MDFloatLayout:
+                        MDLabel:
+                            text: "Location & vente véhicules haut de gamme"
+                            markup: True
+                            halign: "left"
+                            font_style: "H4"
+                            pos_hint: {"center_x": 0.55, "center_y": 0.5}
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                # Sous-titre fixe sous le diaporama
+                MDLabel:
+                    text: "PRO DRIVE - Excellence Automobile À Pointe-Noire."
+                    size_hint_x: 0.85
+                    pos_hint: {"x": 0.06, "y": 0.35}
+                    font_style: "Caption"
+                    theme_text_color: "Custom"
+                    text_color: 0.7, 0.7, 0.7, 1
+                    bold: True
+                    italic: True
+
+            # --- CARROUSEL DES 3 VOITURES ---
+            ScrollView:
+                do_scroll_y: False
+                size_hint_y: None
+                height: dp(180)
+                MDBoxLayout:
+                    adaptive_width: True
+                    spacing: dp(12)
+                    padding: [dp(16), 0]
+
+                    # Carte 1
+                    MDCard:
+                        size_hint: None, None
+                        size: dp(140), dp(170)
+                        radius: [15,]
+                        md_bg_color: 0.09, 0.11, 0.17, 1
+                        orientation: 'vertical'
+                        padding: dp(8)
+                        FitImage:
+                            source: "images/Prado 2024.jpeg"
+                            radius: [10,]
+                        MDLabel:
+                            text: "TOYOTA PRADO"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+                            font_style: "Caption"
+                            bold: True
+                        MDRaisedButton:
+                            text: "RÉSERVER"
+                            size_hint_x: 1
+                            md_bg_color: 0.1, 0.45, 0.26, 1
+
+                    # Carte 2
+                    MDCard:
+                        size_hint: None, None
+                        size: dp(140), dp(170)
+                        radius: [15,]
+                        md_bg_color: 0.09, 0.11, 0.17, 1
+                        orientation: 'vertical'
+                        padding: dp(8)
+                        FitImage:
+                            source: "images/jetour dashing.jpeg"
+                            radius: [10,]
+                        MDLabel:
+                            text: "JETOUR DASHING"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+                            font_style: "Caption"
+                            bold: True
+                        MDRaisedButton:
+                            text: "RÉSERVER"
+                            size_hint_x: 1
+                            md_bg_color: 0.1, 0.45, 0.26, 1
+
+                    # Carte 3
+                    MDCard:
+                        size_hint: None, None
+                        size: dp(140), dp(170)
+                        radius: [15,]
+                        md_bg_color: 0.09, 0.11, 0.17, 1
+                        orientation: 'vertical'
+                        padding: dp(8)
+                        FitImage:
+                            source: "images/toyota lc 2023.jpeg"
+                            radius: [10,]
+                        MDLabel:
+                            text: "LAND CRUISER"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+                            font_style: "Caption"
+                            bold: True
+                        MDRaisedButton:
+                            text: "RÉSERVER"
+                            size_hint_x: 1
+                            md_bg_color: 0.1, 0.45, 0.26, 1
+
+            # --- SECTION BAS : OFFRES EXCLUSIVES ---
+            MDLabel:
+                text: "OFFRES EXCLUSIVES"
+                font_style: "H6"
+                bold: True
+                padding: [dp(16), 0]
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+
+            MDGridLayout:
+                cols: 2
+                adaptive_height: True
+                padding: [dp(16), 0]
+                spacing: dp(15)
+
+                # Offre 1
+                MDCard:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: dp(150)
+                    radius: [15,]
+                    md_bg_color: 0.09, 0.11, 0.17, 1
+                    MDBoxLayout:
+                        padding: dp(5)
+                        MDLabel:
+                            text: "10% RÉDUCTION"
+                            font_style: "Caption"
+                            bold: True
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+                    FitImage:
+                        source: "images/toyota lc 2023.jpeg"
+                        radius: [0, 0, 15, 15]
+
+                # Offre 2
+                MDCard:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: dp(150)
+                    radius: [15,]
+                    md_bg_color: 0.09, 0.11, 0.17, 1
+                    MDBoxLayout:
+                        padding: dp(5)
+                        MDLabel:
+                            text: "10% RÉDUCTION"
+                            font_style: "Caption"
+                            bold: True
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+                    FitImage:
+                        source: "images/Prado 2024.jpeg"
+                        radius: [0, 0, 15, 15]
+
+
+
+# ============================ SEARCH SCREEN ============================
+
+<SearchScreen>:
+    name: "search"
+
+    BoxLayout:
+        orientation: "vertical"
+        spacing: dp(10)
+        padding: [dp(10), dp(10), dp(10), dp(10)]
+
+        MDTextField:
+            id: search_field
+            hint_text: "Rechercher une voiture..."
+            size_hint_y: None
+            height: dp(50)
+            mode: "rectangle"
+            icon_right: "magnify"
+            on_text: app.filter_vehicles(search_field.text)
+
+        ScrollView:
+            size_hint_y: None
+            height: dp(60)
+            do_scroll_x: True
+            do_scroll_y: False
+
+            MDBoxLayout:
+                spacing: dp(10)
+                padding: [dp(16),0]
+                adaptive_width: True
+
+                MDChip:
+                    text: "Tout"
+                    theme_text_color: "Custom"
+                    md_bg_color: 0.2,0.2,0.2,1
+                    text_color: 1,1,1,1
+                    font_size: sp(14)
+                    on_release:
+                        app.load_vehicles(None, app.root.get_screen("search").ids.search_field.text)
+
+                MDChip:
+                    text: "Berlines"
+                    theme_text_color: "Custom"
+                    theme_text_color: "Custom"
+                    md_bg_color: 0.2,0.2,0.2,1
+                    text_color: 1,1,1,1
+                    font_size: sp(14)
+                    on_release:
+                        app.load_vehicles("Berlines", app.root.get_screen("search").ids.search_field.text)
+
+                MDChip:
+                    text: "SUV"
+                    theme_text_color: "Custom"
+                    md_bg_color: 0.2,0.2,0.2,1
+                    text_color: 1,1,1,1
+                    font_size: sp(14)
+                    on_release:
+                        app.load_vehicles("SUV", app.root.get_screen("search").ids.search_field.text)
+                MDChip:
+                    text: "SUS"
+                    theme_text_color: "Custom"
+                    md_bg_color: 0.2,0.2,0.2,1
+                    text_color: 1,1,1,1
+                    font_size: sp(14)
+                    on_release:
+                        app.load_vehicles("SUS", app.root.get_screen("search").ids.search_field.text)
+                MDChip:
+                    text: "4x4"
+                    theme_text_color: "Custom"
+                    theme_text_color: "Custom"
+                    md_bg_color: 0.2,0.2,0.2,1
+                    text_color: 1,1,1,1
+                    font_size: sp(14)
+                    on_release:
+                        app.load_vehicles("4x4", app.root.get_screen("search").ids.search_field.text)
+
+
+
+        ScrollView:
+            do_scroll_x: False
+
+            MDGridLayout:
+                id: vehicle_grid
+                cols: 2
+                adaptive_height: True
+                spacing: dp(12)
+                padding: [dp(16), dp(16), dp(16), dp(16)]
+
+# ============================ RESERVE / RESERVATIONS / PROFILE ============================
+
+<ReserveScreen>:
+    name: "reserve"
+    MDLabel:
+        text: "Écran Réserver"
+        halign: "center"
+
+# ============================ COMPONENT ACTION BUTTON ============================
+
+<ActionBtn@MDBoxLayout+ButtonBehavior>:
+    icon: ""
+    text: ""
+    bg_color: 0.18, 0.22, 0.25, 1
+
+    orientation: "vertical"
+    spacing: dp(4)
+    padding: dp(5)
+
+    canvas.before:
+        Color:
+            rgba: (0.3,0.3,0.3,0.2) if self.state=='down' else (0,0,0,0)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10]
+
+    MDIcon:
+        icon: root.icon
+        theme_text_color: "Custom"
+        text_color: 1, 1, 1, 1
+        halign: "center"
+        font_size: "22sp"
+
+    MDLabel:
+        text: root.text
+        halign: "center"
+        font_style: "Caption"
+        font_size: "10sp"
+        theme_text_color: "Custom"
+        text_color: 1, 1, 1, 1
+
+
+# ============================ RESERVATION CARD ============================
+
+<ReservationCard>:
+    car_name: ""
+    location: ""
+    time: ""
+    res_id: ""
+
+    orientation: "vertical"
+    size_hint_y: None
+    height: dp(190)
+    padding: dp(15)
+    spacing: dp(10)
+    radius: [15,]
+    md_bg_color: 0.12, 0.15, 0.18, 1
+    elevation: 2
+
+    # --- INFOS ---
+    MDBoxLayout:
+        orientation: "horizontal"
+
+        MDBoxLayout:
+            orientation: "vertical"
+            spacing: dp(4)
+
+            MDLabel:
+                text: root.car_name
+                font_style: "H6"
+                bold: True
+                theme_text_color: "Custom"
+                text_color: 1, 1, 1, 1
+
+            MDLabel:
+                text: root.location
+                font_style: "Caption"
+                theme_text_color: "Custom"
+                text_color: 0.8, 0.8, 0.8, 1
+
+            MDLabel:
+                text: root.time
+                font_style: "Caption"
+                theme_text_color: "Custom"
+                text_color: 0.6, 0.6, 0.6, 1
+
+        MDIconButton:
+            icon: "map-marker-path"
+            theme_text_color: "Custom"
+            text_color: 0.4, 0.8, 0.7, 1
+            icon_size: "30sp"
+            md_bg_color: 0.15, 0.22, 0.22, 1
+
+    # --- ACTIONS ---
+    MDGridLayout:
+        cols: 4
+        spacing: dp(8)
+        size_hint_y: None
+        height: dp(70)
+
+        ActionBtn:
+            text: "MODIFIER"
+            icon: "pencil-outline"
+            on_release: app.modify_reservation(root.res_id)
+
+        ActionBtn:
+            text: "ANNULER"
+            icon: "close-thick"
+            bg_color: 0.8, 0.2, 0.2, 1
+            on_release: app.cancel_reservation(root.res_id)
+
+        ActionBtn:
+            text: "FACTURE"
+            icon: "file-pdf-box"
+            on_release: app.invoice_reservation(root.res_id)
+
+        ActionBtn:
+            text: "SUPPRIMER"
+            icon: "trash-can-outline"
+            on_release: app.delete_reservation(root.res_id)
+
+
+# ============================ RESERVATIONS SCREEN ============================
+
+<ReservationsScreen>:
+    name: "reservations"
+
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 0.08, 0.1, 0.12, 1 
+
+        # --- HEADER ---
+        MDFloatLayout:
+            size_hint_y: None
+            height: dp(200)
+
+            FitImage:
+                source: "images/MAP.jpg"
+                size_hint: 1, 1
+
+            MDBoxLayout:
+                orientation: "vertical"
+                pos_hint: {"center_x": .5, "center_y": .6}
+                adaptive_height: True
+
+                MDLabel:
+                    text: "MES RÉSERVATIONS"
+                    halign: "center"
+                    bold: True
+                    font_style: "H5"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+
+                MDLabel:
+                    text: "Suivez et gérez vos trajets"
+                    halign: "center"
+                    font_style: "Caption"
+                    theme_text_color: "Custom"
+                    text_color: 0.7, 0.7, 0.7, 1
+
+        # --- LISTE ---
+        ScrollView:
+            do_scroll_x: False
+
+            MDBoxLayout:
+                id: container_scroll
+                orientation: "vertical"
+                adaptive_height: True
+                padding: dp(15)
+                spacing: dp(15)
+
+# ============================ RESERVATIONS SCREEN ============================
+
+<ReservationsScreen>:
+    name: "reservations"
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 0.04, 0.06, 0.1, 1
+        padding: [0, dp(10), 0, dp(85)]
+
+        MDLabel:
+            text: "MES RÉSERVATIONS"
+            halign: "center"
+            font_style: "H6"
+            bold: True
+            theme_text_color: "Custom"
+            text_color: 1, 1, 1, 1
+            size_hint_y: None
+            height: dp(60)
+
+        ScrollView:
+            do_scroll_x: False
+            MDBoxLayout:
+                id: container_scroll  # L'ID utilisé par self.ids.container_scroll dans ton Python
+                orientation: "vertical"
+                adaptive_height: True
+                spacing: dp(15)
+                padding: dp(15)
+
+
+# ============================ L'ÉCRAN PRINCIPAL ============================
+
+<ReservationsScreen>:
+    name: "reservations"
+    MDBoxLayout:
+        orientation: "vertical"
+        md_bg_color: 0.08, 0.1, 0.12, 1 
+
+        # En-tête avec Illustration (Route/GPS)
+        MDFloatLayout:
+            size_hint_y: None
+            height: dp(200)
+            FitImage:
+                source: "images/MAP.jpg" # Remplacez par votre image de route
+                size_hint: 1, 1
+            
+            MDBoxLayout:
+                orientation: "vertical"
+                pos_hint: {"center_x": .5, "center_y": .6}
+                adaptive_height: True
+                MDLabel:
+                    text: "MES RÉSERVATIONS"
+                    halign: "center"
+                    bold: True
+                    font_style: "H5"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                MDLabel:
+                    text: "Suivez et gérez vos trajets à venir et en cours"
+                    halign: "center"
+                    font_style: "Caption"
+                    theme_text_color: "Custom"
+                    text_color: 0.7, 0.7, 0.7, 1
+
+        # Liste défilante pour les réservations SQLite
+        ScrollView:
+            MDBoxLayout:
+                id: container_scroll
+                orientation: "vertical"
+                adaptive_height: True
+                padding: dp(15)
+                spacing: dp(15)
+
+
+# ============================ PROFILE ============================
+<ProfileItem@MDCard>:
+    icon: ""
+    text: ""
+    on_release: None
+    orientation: "horizontal"
+    padding: [dp(15), dp(10)]
+    spacing: dp(15)
+    radius: [15]
+    elevation: 0.5
+    ripple_behavior: True
+    md_bg_color: 0.98, 0.98, 0.98, 1
+    size_hint_y: None
+    height: dp(65)
+
+    MDIcon:
+        icon: root.icon
+        theme_text_color: "Custom"
+        text_color: 0.2, 0.5, 0.9, 1
+        pos_hint: {"center_y": .5}
+        font_size: "24sp"
+
+    MDLabel:
+        text: root.text
+        font_style: "Body1"
+        theme_text_color: "Primary"
+        pos_hint: {"center_y": .5}
+
+    MDIcon:
+        icon: "chevron-right"
+        theme_text_color: "Hint"
+        pos_hint: {"center_y": .5}
+
+<ProfileScreen>:
+    name: "profile"
+    md_bg_color: 1, 1, 1, 1
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        # --- Top Header (Adaptatif) ---
+        MDBoxLayout:
+            size_hint_y: None
+            height: dp(180)
+            padding: dp(25)
+            spacing: dp(20)
+            canvas.before:
+                Color:
+                    rgba: 0.1, 0.4, 0.9, 1
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [0, 0, 40, 40]
+
+            MDCard:
+                size_hint: None, None
+                size: dp(80), dp(80)
+                radius: [40]
+                elevation: 2
+                pos_hint: {"center_y": .5}
+                
+                FitImage:
+                    source: "avatar.png" # Remplace par ton image
+                    radius: [40]
+
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_height: True
+                pos_hint: {"center_y": .5}
+                
+                MDLabel:
+                    text: app.current_user or "Jean Dupont"
+                    font_style: "H6"
+                    bold: True
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                
+                MDLabel:
+                    text: "Modifier mon profil"
+                    font_style: "Caption"
+                    theme_text_color: "Custom"
+                    text_color: 0.9, 0.9, 0.9, 0.8
+
+        # --- Liste de Paramètres ---
+        ScrollView:
+            do_scroll_x: False
+            
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_height: True
+                padding: dp(20)
+                spacing: dp(12)
+
+                MDLabel:
+                    text: "COMPTE"
+                    font_style: "Overline"
+                    theme_text_color: "Hint"
+                    padding_y: dp(10)
+
+                ProfileItem:
+                    icon: "account-outline"
+                    text: "Informations personnelles"
+                    on_release: root.show_infos()
+
+                ProfileItem:
+                    icon: "shield-lock-outline"
+                    text: "Sécurité & Mot de passe"
+                    on_release: root.change_password()
+
+                MDLabel:
+                    text: "PRÉFÉRENCES"
+                    font_style: "Overline"
+                    theme_text_color: "Hint"
+                    padding_y: dp(10)
+
+                ProfileItem:
+                    icon: "bell-outline"
+                    text: "Notifications"
+
+                ProfileItem:
+                    icon: "palette-outline"
+                    text: "Apparence du thème"
+                    on_release: app.toggle_theme()
+
+                # --- Zone de Danger ---
+                MDBoxLayout:
+                    orientation: "vertical"
+                    adaptive_height: True
+                    spacing: dp(15)
+                    padding: [0, dp(40), 0, dp(20)]
+
+                    MDFillRoundFlatButton:
+                        text: "Déconnexion"
+                        md_bg_color: 0.1, 0.4, 0.9, 1
+                        size_hint_x: 1
+                        font_size: "16sp"
+                        on_release: root.logout()
+
+                    MDTextButton:
+                        text: "Supprimer mon compte"
+                        theme_text_color: "Error"
+                        pos_hint: {"center_x": .5}
+                        on_release: root.delete_account()
+
+
+# ============================ CAR DETAIL SCREEN ============================
+<CarDetailScreen>:
+    name: "car_detail"
+    md_bg_color: 0.05,0.05,0.05,1
+
+    BoxLayout:
+        orientation: "vertical"
+
+        # -------- Top bar --------
+        BoxLayout:
+            size_hint_y: None
+            height: dp(50)
+            padding: dp(10)
+            spacing: dp(10)
+
+            MDIconButton:
+                icon: "arrow-left"
+                on_release: app.go_to_screen("search")
+
+            MDLabel:
+                text: "Détails du véhicule"
+                halign: "center"
+                font_style: "H6"
+
+        ScrollView:
+            do_scroll_x: False
+
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_height: True
+                padding: [dp(16), dp(16), dp(16), dp(100)]
+                spacing: dp(20)
+
+                # -------- Image voiture --------
+                MDCard:
+                    size_hint_y: None
+                    height: dp(220)
+                    elevation: 2
+
+                    AsyncImage:
+                        id: detail_image
+                        source: ""
+                        allow_stretch: True
+                        keep_ratio: True
+
+                # -------- Choix image --------
+                MDBoxLayout:
+                    size_hint_y: None
+                    height: dp(40)
+                    spacing: dp(10)
+
+                    MDRaisedButton:
+                        text: "Principale"
+                        on_release: app.set_detail_image("main")
+
+                    MDRaisedButton:
+                        text: "Intérieur"
+                        on_release: app.set_detail_image("interior")
+
+                    MDRaisedButton:
+                        text: "Arrière"
+                        on_release: app.set_detail_image("rear")
+
+                # -------- Spécifications --------
+                MDGridLayout:
+                    cols: 2
+                    adaptive_height: True
+                    row_default_height: dp(30)
+                    spacing: dp(10)
+
+                    MDLabel:
+                        text: "Transmission"
+                        theme_text_color: "Secondary"
+
+                    MDLabel:
+                        id: transmission_label
+                        text: "Automatique"
+
+                    MDLabel:
+                        text: "Carburant"
+                        theme_text_color: "Secondary"
+
+                    MDLabel:
+                        id: fuel_label
+                        text: "Essence"
+
+                    MDLabel:
+                        text: "Places"
+                        theme_text_color: "Secondary"
+
+                    MDLabel:
+                        id: seats_label
+                        text: "5"
+
+                # -------- Options --------
+                MDLabel:
+                    text: "Options"
+                    font_style: "Subtitle1"
+
+                MDBoxLayout:
+                    orientation: "vertical"
+                    adaptive_height: True
+                    spacing: dp(10)
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        spacing: dp(10)
+
+                        MDCheckbox:
+                            id: gps_checkbox
+                            active: True
+
+                        MDLabel:
+                            text: "GPS"
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        spacing: dp(10)
+
+                        MDCheckbox:
+                            id: clim_checkbox
+                            active: True
+
+                        MDLabel:
+                            text: "Climatisation"
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: dp(40)
+                        spacing: dp(10)
+
+                        MDCheckbox:
+                            id: bluetooth_checkbox
+                            active: True
+
+                        MDLabel:
+                            text: "Bluetooth"
+
+                # -------- Bouton réservation --------
+                MDRaisedButton:
+                    text: "Confirmer la réservation"
+                    size_hint_x: 1
+                    size_hint_y: None
+                    height: dp(50)
+                    md_bg_color: 0.83,0.56,0.18,1
+                    on_release: app.confirm_reservation()
+
+                Widget:
+                    size_hint_y: None
+                    height: dp(120)
