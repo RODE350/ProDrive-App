@@ -5,27 +5,30 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install System Dependencies
+      - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-          pip install --upgrade Cython==0.29.33 buildozer
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev libgmp-dev
+          pip install --upgrade Cython==0.29.33 buildozer 
 
-      - name: Build APK with Buildozer
+      - name: Build APK
         run: |
-          # On ne met pas de "clean" ici pour éviter l'erreur de dossier inexistant au premier lancement
+          # On force buildozer à utiliser son propre SDK/NDK isolé
           yes | buildozer -v android debug
+        env:
+          # On vide les variables qui pourraient pointer vers le mauvais NDK de GitHub
+          ANDROID_NDK_HOME: ''
+          ANDROID_SDK_ROOT: ''
 
-      - name: Upload APK Result
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ProDrive-APK-File
+          name: ProDrive-APK
           path: bin/*.apk
