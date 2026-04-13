@@ -14,7 +14,7 @@ icon.filename = logo1.png
 presplash.filename = logo1.png
 
 # 🔥 Requirements (Kivy 2.3.0 est plus stable pour le build auto)
-requirements = python3, kivy==2.3.0, kivymd==1.1.1, pillow, reportlab
+requirements = python3, kivy==2.3.0, kivymd==1.1.1
 
 orientation = portrait
 android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
