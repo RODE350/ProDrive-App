@@ -1,11 +1,12 @@
 name: Build ProDrive APK
-on: [push, workflow_dispatch] # workflow_dispatch permet de relancer manuellement
+on: [push, workflow_dispatch]
 
 jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Python 3.10
         uses: actions/setup-python@v5
@@ -20,9 +21,7 @@ jobs:
 
       - name: Build APK with Buildozer
         run: |
-          # Nettoyage des anciennes tentatives
-          buildozer android clean
-          # Lancement de la compilation
+          # On ne met pas de "clean" ici pour éviter l'erreur de dossier inexistant au premier lancement
           yes | buildozer -v android debug
 
       - name: Upload APK Result
