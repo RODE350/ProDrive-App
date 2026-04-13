@@ -5,33 +5,33 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install System Dependencies
+      - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev libsqlite3-dev libgmp-dev
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
           pip install --upgrade Cython==0.29.33 buildozer
+          # On installe reportlab et pillow ici pour éviter les erreurs de compilation C
+          pip install reportlab pillow -t .
 
-      - name: Cache Buildozer Data
-        uses: actions/cache@v4
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
-
-      - name: Build APK with Buildozer
+      - name: Build APK
+        # CETTE SECTION EST LA CLÉ
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+          ANDROID_NDK_HOME: '' 
+          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
         run: |
-          # On laisse Buildozer gérer le SDK/NDK dans son propre dossier .buildozer
+          # On lance buildozer sans que GitHub ne le perturbe
           yes | buildozer -v android debug
 
-      - name: Upload APK Result
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ProDrive-APK-File
+          name: ProDrive-APK
           path: bin/*.apk
