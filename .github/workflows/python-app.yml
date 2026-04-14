@@ -2,44 +2,56 @@ name: BuildProDrive APK
 
 on:
   push:
+    branches: [ "main" ]
   workflow_dispatch:
+
+env:
+  # Supprime les avertissements de dépréciation Node.js 20
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
   build:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Setup Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install System Dependencies
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+
+      - name: Install Python Dependencies
+        run: |
           pip install --upgrade pip
-          # Correction : Cython 3.x est souvent requis pour les versions récentes de Kivy/Buildozer
-          pip install Cython buildozer 
+          pip install Cython buildozer
           pip install reportlab pillow
 
-      # ÉTAPE CRUCIALE : Accepter les licences Android avant de lancer Buildozer
-      - name: Accept Android Licenses
+      - name: Accept Android SDK Licenses
         run: |
+          # Cette étape est cruciale pour que Buildozer puisse télécharger les outils Android
           yes | sdkmanager --licenses || true
 
-      - name: Build APK
+      - name: Build APK with Buildozer
         env:
-          # Utilisation des chemins par défaut de l'image GitHub Actions
+          # Chemins standards sur les runners GitHub Actions
           JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
         run: |
-          # On ne fait pas de 'clean' sur un runner neuf, c'est inutile
+          # On s'assure que buildozer.spec existe, sinon on l'initialise (optionnel si tu l'as déjà)
+          if [ ! -f buildozer.spec ]; then buildozer init; fi
+          
+          # Lancement de la compilation en mode verbeux (-v)
           buildozer -v android debug
 
-      - name: Upload APK
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ProDrive-APK
+          # Buildozer place l'APK généré dans le dossier 'bin'
           path: bin/*.apk
