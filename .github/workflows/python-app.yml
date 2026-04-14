@@ -2,36 +2,43 @@ name: Build ProDrive APK
 on: [push, workflow_dispatch]
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
+build:
+runs-on: ubuntu-22.04
 
-      - name: Setup Python 3.10
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+```
+steps:
+  - uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-          pip install --upgrade Cython==0.29.33 buildozer
-          # On installe reportlab et pillow ici pour éviter les erreurs de compilation C
-          pip install reportlab pillow -t .
+  - name: Setup Python 3.10
+    uses: actions/setup-python@v5
+    with:
+      python-version: '3.10'
 
-      - name: Build APK
-        # CETTE SECTION EST LA CLÉ
-        env:
-          ANDROID_HOME: /usr/local/lib/android/sdk
-          ANDROID_NDK_HOME: '' 
-          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-        run: |
-          # On lance buildozer sans que GitHub ne le perturbe
-          yes | buildozer -v android debug
+  - name: Install Dependencies
+    run: |
+      sudo apt update
+      sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+      
+      pip install --upgrade pip
+      pip install Cython==0.29.33 buildozer
+      
+      # Installer dans le projet (important pour python-for-android)
+      pip install reportlab pillow
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: ProDrive-APK
-          path: bin/*.apk
+  - name: Clean previous builds (IMPORTANT)
+    run: |
+      buildozer android clean
+
+  - name: Build APK
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
+    run: |
+      yes | buildozer -v android debug
+
+  - name: Upload APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: ProDrive-APK
+      path: bin/*.apk
+```
