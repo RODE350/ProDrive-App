@@ -4,23 +4,28 @@ package.name = prodrive
 package.domain = org.prodrive
 source.dir = .
 
-# 🔥 IMPORTANT
+# Fichiers inclus
 source.include_exts = py,kv,png,jpg,jpeg,atlas,db,pdf
-source.include_patterns = assets/*,images/*,database/*,*.db,*.pdf
+source.include_patterns = assets/*,images/*,database/*,*.db,*.pdf,*.png
+
 version = 0.1
 
-# 🔥 ICÔNE ET ÉCRAN DE DÉMARRAGE
-icon.filename = logo1.png
-presplash.filename = logo1.png
+# ✅ CORRECTION ICI (met ton logo dans /images/)
+icon.filename = images/logo1.png
+presplash.filename = images/logo1.png
 
-# 🔥 Requirements (Kivy 2.3.0 est plus stable pour le build auto)
-requirements = python3, kivy==2.3.0, kivymd==1.1.1
+# Requirements
+requirements = python3, kivy==2.3.0, kivymd==1.1.1, pillow, reportlab
 
 orientation = portrait
+
+# Permissions
 android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
+
+# Architectures
 android.archs = arm64-v8a, armeabi-v7a
 
-# 🔥 FIX POUR GITHUB ACTIONS
+# Config Android (GitHub Actions OK)
 android.api = 31
 android.minapi = 21
 android.ndk = 25b
